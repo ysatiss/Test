@@ -1,0 +1,65 @@
+---
+- name: Create a VM
+  hosts: vmware
+  gather_facts: false
+  connection: local
+
+  vars_prompt:
+    - name: "vcenter_hostname"
+      prompt: "Enter vcenter hostname"
+      private: no
+      default: "172.180.0.150"
+    - name: "vcenter_user"
+      prompt: "Enter vcenter username"
+      private: no
+      default: administrator@vcenter.local
+    - name: "vcenter_pass"
+      prompt: "Enter vcenter password"
+      private: yes
+
+  vars:
+    datacenter: 'Datacenter'
+    esxi_host: '172.180.0.147'
+    notes: 'Created by Ansible Saba'
+    typedisk: eagerzeroedthick
+    cpucount: 2
+    disk: 10
+    memory: 1572
+    inventory_hostname:
+    datastore: FreeNAS2
+    osid: debian6_64Guest
+    network: VM Network
+
+
+  tasks:
+  - name: Create a virtual machine on given ESXi hostname
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_user }}"
+      password: "{{ vcenter_pass }}"
+      validate_certs: no
+      folder: /
+      datacenter: "{{ datacenter }}"
+      name: VMwithoutTemplateDemo
+      state: poweredoff
+      guest_id: centos64Guest
+      # This is hostname of particular ESXi server on which user wants VM to be deployed
+      esxi_hostname: "{{ esxi_host }}"
+      disk:
+      - size_gb: 10
+        type: eagerzeroedthick
+        datastore: FreeNAS2
+      hardware:
+        memory_mb: 1572
+        num_cpus: 2
+        scsi: paravirtual
+#      networks:
+#      - name: VM Network
+#        mac: aa:bb:dd:aa:00:14
+#        ip: 10.10.10.100
+#        netmask: 255.255.255.0
+#        device_type: vmxnet3
+      wait_for_ip_address: no
+#      delegate_to: localhost
+      notes: "{{ notes }}"
+    register: deploy_vm

@@ -1,0 +1,18 @@
+---
+- name: Create a VM
+  hosts: vmware
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: VM
+    vmware_guest:
+      hostname: 172.180.0.150
+      username: administrator@vcenter.local
+      password: Qwerty!1
+      validate_certs: False
+      name: vmansibledebian
+#      template: VM1
+      datacenter: Datacenter
+      folder: /
+      state: poweredoff
+      wait_for_ip_address: yes

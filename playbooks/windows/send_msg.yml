@@ -1,0 +1,20 @@
+---
+- name: Maintenance on TSE
+  hosts: windows
+  gather_facts: "false"
+
+#  vars_prompt:
+#    - name: "Message"
+#      prompt: "Entrez votre message"
+#      private: no
+#      default: "localhost"
+
+  vars:
+      Message: La reine de Saba
+
+  tasks:
+  - name: Ping TSE
+    win_ping:
+
+  - name: send msg
+    win_shell: msg.exe /server:172.180.0.129 * "{{ Message }}"

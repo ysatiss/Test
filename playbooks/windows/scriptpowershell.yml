@@ -1,0 +1,8 @@
+---
+
+- name: "Run powershell script"
+  hosts: "windows"
+  gather_facts: "false"
+  tasks:
+    - name: "Start Script VM Management"
+      script: "files/DeployVMs.ps1"

@@ -1,0 +1,62 @@
+---
+- hosts: vmware
+  gather_facts: false
+  connection: local
+
+  vars_prompt:
+    - name: "vcenter_hostname"
+      prompt: "Enter vcenter hostname"
+      private: no
+      default: "172.180.0.150"
+    - name: "vcenter_user"
+      prompt: "Enter vcenter username"
+      private: no
+      default: administrator@vcenter.local
+    - name: "vcenter_pass"
+      prompt: "Enter vcenter password"
+      private: yes
+
+  vars:
+    datacenter: 'Datacenter'
+    esxi_host: '172.180.0.147'
+    notes: 'Created by Ansible Saba'
+    typedisk: eagerzeroedthick
+    cpucount: 2
+    disk: 10
+    memory: 1572 
+    inventory_hostname:
+    datastore: FreeNAS2
+    osid: debian6_64Guest
+    network: VM Network
+
+  tasks:
+    - vsphere_guest:
+        vcenter_hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_user }}"
+        password: "{{ vcenter_pass }}"
+#        guest: "{{ inventory_hostname }}"
+#        state: present
+        name: VMwithoutTemplate
+        state: powered_off
+        validate_certs: False
+        vm_extra_config:
+          notes: "{{ notes }}"
+        vm_disk:
+          disk1:
+            size_gb: "{{ disk }}"
+            type: "{{ typedisk }}"
+            datastore: "{{ datastore }}"
+        vm_nic:
+          nic1:
+            type: vmxnet3
+            network: "{{ network }}"
+            network_type: standard
+        vm_hardware:
+          memory_mb: "{{ memory }}"
+          num_cpus: "{{ cpucount }}"
+          osid: "{{ osid }}"
+          scsi: paravirtual
+        esxi:
+          datacenter: "{{ datacenter }}"
+          hostname: "{{ esxi_host }}"
+#        register: deploy

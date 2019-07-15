@@ -1,0 +1,59 @@
+---
+- name: Create a VM from a template
+  hosts: vmware
+  gather_facts: false
+  connection: local
+
+#  vars_prompt:
+#    - name: "vcenter_hostname"
+#      prompt: "Enter vcenter hostname"
+#      private: no
+#      default: "172.180.0.150"
+#    - name: "vcenter_user"
+#      prompt: "Enter vcenter username"
+#      private: no
+#      default: "administrator@vcenter.local"
+#    - name: "vcenter_pass"
+#      prompt: "Enter vcenter password"
+#      private: yes
+
+  vars:
+    datacenter: 'ha-datacenter'
+    esxi_host: '172.180.0.147'
+    notes: 'Created by Ansible'
+    vcenter_hostname: 172.180.0.150
+    vcenter_user: administrator@vcenter.local
+    vcenter_pass: Qwerty!1
+    datastore: FreeNAS2
+    network: VM Network
+    memory: 10
+    cpucount: 1
+    osid: debin6_64Guest
+
+  tasks:
+  - name: Create a VM from template
+    vmware_guest:
+      hostname: 172.180.0.150
+      username: administrator@vcenter.local
+      password: Qwerty!1
+      validate_certs: no
+      datacenter: Datacenter
+      folder: /
+      name: testvm_1
+      state: present
+      template: VM1
+#      disk:
+#      - size_mb: 300
+#       type: thin
+      datastore: FreeNAS2
+      hardware:
+        memory_mb: 512
+        num_cpus: 1
+        scsi: paravirtual
+#      networks:
+#      - name: 'VM Network'
+#        mac: aa:bb:dd:aa:00:14
+#      state: poweredoff
+      wait_for_ip_address: no
+#    delegate_to: localhost
+    register: deploy
